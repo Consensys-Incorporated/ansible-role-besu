@@ -1,13 +1,13 @@
 ---
 - name: install | Lookup besu user
-  getent:
+  ansible.builtin.getent:
     database: passwd
     key: "{{ besu_user }}"
   register: besu_user_entry
   failed_when: false
 
 - name: install | Determine if besu user exists
-  set_fact:
+  ansible.builtin.set_fact:
     besu_user_exists: "{{ besu_user in (besu_user_entry.ansible_facts.getent_passwd | default({})) }}"
 
 - block:
@@ -25,14 +25,14 @@
         name: besu
         state: stopped
       become: true
-      when: besu_uid_needs_update
+      when: besu_uid_needs_update | bool
 
     - name: install | Mark UID update for systemd restart
       ansible.builtin.set_fact:
         besu_state_updates: "{{ besu_state_updates + ['besu.uid'] }}"
-      when: besu_uid_needs_update
+      when: besu_uid_needs_update | bool
 
-  when: besu_user_exists
+  when: besu_user_exists | bool
 
 - name: install | Ensure Besu group exists
   ansible.builtin.group:
@@ -50,7 +50,7 @@
   become: true
 
 - name: install | Create directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ besu_user }}"
@@ -135,7 +135,7 @@
   become: true
 
 - name: install | delete the besu_build_from_source directory
-  file:
+  ansible.builtin.file:
     path: '/tmp/besu'
     state: directory
     owner: "{{ besu_user }}"
@@ -145,7 +145,7 @@
   when: besu_build_from_source | bool
   
 - name: install | Install plugins
-  include_tasks: "plugins.yml"
+  ansible.builtin.include_tasks: "plugins.yml"
   when: besu_plugins != []
 
 - name: install | Create a symlink to current

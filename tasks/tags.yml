@@ -1,5 +1,5 @@
 - name: tags | Set the version on a local file so it can be used by other automation
-  copy:
+  ansible.builtin.copy:
     content: "{{ _besu_version }}"
     dest: "{{ besu_version_info_file }}"
     owner: "{{ besu_user }}"

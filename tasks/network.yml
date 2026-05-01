@@ -2,8 +2,8 @@
 - name: network | Get the default ipv4 address - and set this as the default fallback
   ansible.builtin.set_fact:
     besu_host_ip: >-
-      {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] if
-      hostvars[inventory_hostname]['ansible_default_ipv4']['address'] is
+      {{ hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['address'] if
+      hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['address'] is
       defined else '127.0.0.1' }}
 
 - name: network | Fetch public IP

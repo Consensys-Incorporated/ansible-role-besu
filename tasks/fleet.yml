@@ -3,8 +3,8 @@
 - name: fleet | Get the default ipv4 address
   ansible.builtin.set_fact:
     besu_default_ip: >-
-      {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] if
-      hostvars[inventory_hostname]['ansible_default_ipv4']['address'] is
+      {{ hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['address'] if
+      hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['address'] is
       defined else '127.0.0.1' }}
     besu_aws_private_ip: ""
     besu_gcp_private_ip: ""
@@ -66,7 +66,7 @@
   when: (besu_plugin_fleet_node_role=="FOLLOWER") and
     ( aws_private_ip_output.status != 200 ) and
     ( azure_private_ip_output.status != 200 ) and
-    ( gcp_private_ip_output == 200 )
+    ( gcp_private_ip_output.status == 200 )
 
 - name: fleet | Fallback to the ansible default ip
   ansible.builtin.set_fact:
@@ -74,4 +74,4 @@
   when: (besu_plugin_fleet_node_role=="FOLLOWER") and
     ( aws_private_ip_output.status != 200 ) and
     ( azure_private_ip_output.status != 200 ) and
-    ( gcp_private_ip_output != 200 )
+    ( gcp_private_ip_output.status != 200 )

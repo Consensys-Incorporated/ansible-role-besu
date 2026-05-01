@@ -37,6 +37,6 @@
   register: pyroscope_config_changes
 
 - name: pyro | Set updated optionally to trigger a systemd restart at the end
-  set_fact:
+  ansible.builtin.set_fact:
     besu_state_updates: "{{ besu_state_updates + ['besu.pyroscope'] }}"
   when: pyroscope_changes is changed

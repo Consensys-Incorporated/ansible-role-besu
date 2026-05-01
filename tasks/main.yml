@@ -27,8 +27,8 @@
   ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - files:
-        - "{{ ansible_distribution|lower }}.yml"
-        - "{{ ansible_os_family|lower }}.yml"
+        - "{{ ansible_facts['distribution']|lower }}.yml"
+        - "{{ ansible_facts['os_family']|lower }}.yml"
       skip: true
 
 - name: main | Compile besu
@@ -42,8 +42,8 @@
   ansible.builtin.include_tasks: "{{ item }}"
   with_first_found:
     - files:
-        - "{{ ansible_distribution|lower }}/install.yml"
-        - "{{ ansible_os_family|lower }}/install.yml"
+        - "{{ ansible_facts['distribution']|lower }}/install.yml"
+        - "{{ ansible_facts['os_family']|lower }}/install.yml"
       skip: true
 
 - name: main | Get IP address to bind to if not provided

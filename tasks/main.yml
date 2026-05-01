@@ -4,7 +4,7 @@
     - name: main | Check besu_version is correct
       ansible.builtin.fail:
         msg: You must set "besu_version" for this role to run when not building Besu from source
-      when: besu_version is not defined and not besu_build_from_source
+      when: besu_version is not defined and not (besu_build_from_source | bool)
 
     - name: main | Check besu_privacy_enabled is not set when fast sync is enabled
       ansible.builtin.fail:
@@ -33,7 +33,7 @@
 
 - name: main | Compile besu
   ansible.builtin.include_tasks: "compile.yml"
-  when: besu_build_from_source
+  when: besu_build_from_source | bool
 
 - name: main | Install besu
   ansible.builtin.include_tasks: "install.yml"
@@ -56,7 +56,7 @@
 
 - name: main | Setup pyroscope
   ansible.builtin.include_tasks: "pyroscope.yml"
-  when: besu_pyroscope_enabled
+  when: besu_pyroscope_enabled | bool
 
 - name: main | Create config
   ansible.builtin.include_tasks: "config.yml"

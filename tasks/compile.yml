@@ -6,7 +6,7 @@
   when: not (besu_git_repo is defined) or besu_git_repo|length == 0
 
 - name: compile | Check JDK version
-  shell: javac -version | egrep -o '[0-9]+\.[0-9]+\.[0-9]+'
+  ansible.builtin.shell: javac -version | egrep -o '[0-9]+\.[0-9]+\.[0-9]+'
   register: jdk_version
   changed_when: false
   ignore_errors: true
@@ -21,7 +21,7 @@
     repo: "{{ besu_git_repo }}"
     dest: '/tmp/besu'
     version: "{{ besu_git_commit }}"
-    recursive: yes
+    recursive: true
     depth: 1
   become: true
   become_user: ubuntu
@@ -33,7 +33,7 @@
         path: /tmp/besu
         owner: ubuntu
         group: ubuntu
-        recurse: yes
+        recurse: true
       become: true
 
     - name: compile | Build Besu
@@ -45,7 +45,7 @@
       register: besu_build_result
       changed_when: true
       ignore_errors: true  # handle the failure manually in the next step
-      retries: "{{ besu_build_retries | int }}"  
+      retries: "{{ besu_build_retries | int }}"
       delay: 10   # wait 10 seconds between retries
       until: besu_build_result.rc == 0  # retry until the command returns a successful return code
 

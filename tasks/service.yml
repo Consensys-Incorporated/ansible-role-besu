@@ -5,6 +5,7 @@
     dest: "{{ besu_systemd_dir }}/besu.service"
     owner: "root"
     group: "root"
+    mode: "0644"
   become: true
   when: ( besu_managed_service | bool ) and
     ( ansible_facts['os_family'] != "Darwin" )
@@ -17,7 +18,7 @@
 
 - name: service | Reload systemd to reread configs
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
   become: true
   when: systemd_file is changed
 
@@ -40,6 +41,7 @@
   ansible.builtin.template:
     src: "{{ besu_launchd_template }}"
     dest: "{{ besu_launchd_dir }}/org.hyperledger.besu.plist"
+    mode: "0644"
   become: true
   when: ( ansible_facts['os_family'] == "Darwin" ) and
     ( besu_managed_service | bool )

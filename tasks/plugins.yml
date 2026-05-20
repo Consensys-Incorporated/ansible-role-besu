@@ -6,6 +6,7 @@
     dest: "{{ besu_plugins_dir }}/"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
+    mode: "0644"
   become: true
   loop:
     - "{{ besu_plugins }}"

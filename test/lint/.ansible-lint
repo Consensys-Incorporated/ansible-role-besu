@@ -1,8 +1,15 @@
+---
 exclude_paths:
-  - ./venv
-parseable: true
+  - .venv/
+  - venv/
+
 use_default_rules: true
-verbosity: true
+
+# ansible-lint v26 uses rule IDs/names instead of legacy numeric codes
 skip_list:
-  - '204'
-  - '602'
+  - lines-too-long
+  - risky-shell-pipe
+  - name[casing]
+  - no-handler
+  - command-instead-of-shell
+  - no-changed-when

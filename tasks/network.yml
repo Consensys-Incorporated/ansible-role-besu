@@ -10,10 +10,10 @@
   ansible.builtin.uri:
     url: http://ifconfig.me/ip
     method: GET
-    return_content: yes
+    return_content: true
     status_code: 200
   register: besu_public_ip_output
-  ignore_errors: True
+  ignore_errors: true
 
 - name: network | Set the host ip
   ansible.builtin.set_fact:

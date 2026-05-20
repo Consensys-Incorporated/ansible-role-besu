@@ -5,7 +5,7 @@
     dest: "{{ besu_config_file }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
-    mode: 0644
+    mode: "0644"
   become: true
   register: config_toml
 
@@ -14,17 +14,17 @@
 - name: config | Set static nodes file path when list is provided
   ansible.builtin.set_fact:
     besu_static_nodes_file: "{{ besu_config_dir }}/static-nodes.json"
-  when: besu_static_nodes != [] and besu_static_nodes_file == ""
+  when: besu_static_nodes_list != [] and besu_static_nodes_file == ""
 
 - name: config | Generate static nodes file if defined
   ansible.builtin.copy:
     dest: "{{ besu_static_nodes_file }}"
-    content: "{{ besu_static_nodes | to_json }}"
+    content: "{{ besu_static_nodes_list | to_json }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
-    mode: 0644
+    mode: "0644"
   become: true
-  when: besu_static_nodes != []
+  when: besu_static_nodes_list != []
 
 - name: config | Generate local permissions file if defined
   ansible.builtin.template:
@@ -32,11 +32,13 @@
     dest: "{{ besu_local_permissions_config_file }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
-    mode: 0644
+    mode: "0644"
   become: true
   when: besu_local_permissions_accounts != [] or besu_local_permissions_nodes != []
 
 - name: config | JWT secret
+  when: besu_engine_jwt_secret is defined and besu_engine_jwt_secret != ""
+  become: true
   block:
     - name: Check if a JWT secret already exists
       ansible.builtin.stat:
@@ -52,7 +54,7 @@
         content: "{{ besu_engine_jwt_secret_content | default((('%#064x' % ((2 | pow(256) | int ) | random)) | split('x'))[1]) }}"
         owner: "{{ besu_user }}"
         group: "{{ besu_group }}"
-        mode: 0400
+        mode: "0400"
       register: jwt_secret_content
       when: besu_engine_jwt_secret_content is defined or not stat_result.stat.exists or stat_result.stat.size == 0
 
@@ -61,8 +63,6 @@
         besu_state_updates: "{{ besu_state_updates + ['besu.jwt_secret_content'] }}"
       when: jwt_secret_content is changed
 
-  when: besu_engine_jwt_secret is defined and besu_engine_jwt_secret != ""
-  become: yes
 
 - name: config | Set updated optionally to trigger a systemd restart at the end
   ansible.builtin.set_fact:

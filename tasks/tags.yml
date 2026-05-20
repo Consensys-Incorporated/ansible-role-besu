@@ -4,5 +4,5 @@
     dest: "{{ besu_version_info_file }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
-    mode: 0644
+    mode: "0644"
   become: true

@@ -5,6 +5,7 @@
     dest: "{{ besu_pyroscope_jar_file }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
+    mode: "0644"
   become: true
   register: pyroscope_changes
 
@@ -32,7 +33,7 @@
     dest: "{{ besu_pyroscope_config_file }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
-    mode: 0644
+    mode: "0644"
   become: true
   register: pyroscope_config_changes
 

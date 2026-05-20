@@ -10,8 +10,9 @@
   ansible.builtin.set_fact:
     besu_user_exists: "{{ besu_user in (besu_user_entry.ansible_facts.getent_passwd | default({})) }}"
 
-- block:
-
+- name: install | If besu user exists - check if the UID matches the expected value
+  when: besu_user_exists | bool
+  block:
     - name: install | Extract current UID
       ansible.builtin.set_fact:
         besu_current_uid: "{{ besu_user_entry.ansible_facts.getent_passwd[besu_user][1] | int }}"
@@ -20,7 +21,6 @@
       ansible.builtin.set_fact:
         besu_uid_needs_update: "{{ besu_current_uid != besu_uid }}"
 
-  when: besu_user_exists | bool
 
 - name: install | Populate service facts
   ansible.builtin.service_facts:
@@ -56,7 +56,7 @@
 
 - name: install | Create Besu user
   ansible.builtin.user:
-    comment:  Besu client user
+    comment: Besu client user
     name: "{{ besu_user }}"
     uid: "{{ besu_uid }}"
     group: "{{ besu_group }}"
@@ -88,9 +88,12 @@
   ansible.builtin.template:
     src: "logrotate/besu"
     dest: "/etc/logrotate.d/besu"
+    mode: "0644"
   become: true
 
-- block:
+- name: install | Initialize ownership of data directory if not already done
+  when: not ownership_marker.stat.exists
+  block:
     - name: install | One-time recursive ownership of data dir
       ansible.builtin.file:
         path: "{{ besu_data_dir }}"
@@ -108,12 +111,11 @@
         group: "{{ besu_group }}"
         mode: "0644"
       become: true
-  when: not ownership_marker.stat.exists
 
 - name: install | Extract Besu source to install directory
   ansible.builtin.unarchive:
-    src: "{{ '/tmp/besu/build/distributions/besu-' + _besu_version + '.tar.gz' if (besu_build_from_source | bool) else besu_download_url }}"    
-    remote_src: yes
+    src: "{{ '/tmp/besu/build/distributions/besu-' + _besu_version + '.tar.gz' if (besu_build_from_source | bool) else besu_download_url }}"
+    remote_src: true
     dest: "{{ besu_install_dir }}"
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
@@ -131,7 +133,7 @@
     state: absent
   become: true
   when: besu_build_from_source | bool
-  
+
 - name: install | Install plugins
   ansible.builtin.include_tasks: "plugins.yml"
   when: besu_plugins != []

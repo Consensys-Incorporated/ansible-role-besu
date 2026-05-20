@@ -1,4 +1,5 @@
 .idea/
+.ansible/
 env/
 venv/
 .venv/

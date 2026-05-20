@@ -15,5 +15,5 @@
     fail_msg: "Retrieved version [{{ _besu_version }}] is  not a valid"
 
 - name: latest | Information
-  debug:
+  ansible.builtin.debug:
     msg: "Latest Besu version is {{ _besu_version }}"

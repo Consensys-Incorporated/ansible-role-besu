@@ -1,4 +1,3 @@
-
 ---
 - name: fleet | Get the default ipv4 address
   ansible.builtin.set_fact:
@@ -14,10 +13,10 @@
   ansible.builtin.uri:
     url: http://169.254.169.254/latest/meta-data/local-ipv4
     method: GET
-    return_content: yes
+    return_content: true
     status_code: 200
   register: aws_private_ip_output
-  ignore_errors: True
+  ignore_errors: true
   when: (besu_plugin_fleet_node_role=="FOLLOWER")
 
 - name: fleet | Set the host ip if we are in AWS
@@ -32,10 +31,10 @@
     method: GET
     headers:
       Metadata: true
-    return_content: yes
+    return_content: true
     status_code: 200
   register: azure_private_ip_output
-  ignore_errors: True
+  ignore_errors: true
   when: (besu_plugin_fleet_node_role=="FOLLOWER") and
     ( aws_private_ip_output.status != 200 )
 
@@ -52,10 +51,10 @@
     method: GET
     headers:
       Metadata-Flavor: Google
-    return_content: yes
+    return_content: true
     status_code: 200
   register: gcp_private_ip_output
-  ignore_errors: True
+  ignore_errors: true
   when: (besu_plugin_fleet_node_role=="FOLLOWER") and
     ( aws_private_ip_output.status != 200 ) and
     ( azure_private_ip_output.status != 200 )

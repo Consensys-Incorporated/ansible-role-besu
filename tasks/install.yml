@@ -20,19 +20,32 @@
       ansible.builtin.set_fact:
         besu_uid_needs_update: "{{ besu_current_uid != besu_uid }}"
 
-    - name: install | Stop enabled besu service if UID needs update
-      ansible.builtin.service:
-        name: besu
-        state: stopped
-      become: true
-      when: besu_uid_needs_update | bool
-
-    - name: install | Mark UID update for systemd restart
-      ansible.builtin.set_fact:
-        besu_state_updates: "{{ besu_state_updates + ['besu.uid'] }}"
-      when: besu_uid_needs_update | bool
-
   when: besu_user_exists | bool
+
+- name: install | Populate service facts
+  ansible.builtin.service_facts:
+
+# This will ignore the case when besu is manually stopped - it assumes that is a mistake
+# If you are manually stopping and updating besu - disable the systemd service
+- name: install | Debug besu service state
+  ansible.builtin.debug:
+    var: ansible_facts.services['besu.service']
+
+- name: install | Halt the service if its running while we update
+  ansible.builtin.systemd:
+    name: besu
+    state: "stopped"
+  become: true
+  register: besu_systemd_stopped
+  when: (ansible_facts.services['besu.service'] is defined) and
+        ((ansible_facts.services['besu.service'].status == "enabled") or
+         (besu_uid_needs_update | default(false) | bool))
+
+- name: install | Set updated optionally to trigger a systemd restart at the end
+  ansible.builtin.set_fact:
+    besu_state_updates: "{{ besu_state_updates + ['besu.running_service'] }}"
+  when: (besu_systemd_stopped is defined) and
+        (besu_systemd_stopped.state | default('') == "stopped")
 
 - name: install | Ensure Besu group exists
   ansible.builtin.group:
@@ -77,30 +90,6 @@
     dest: "/etc/logrotate.d/besu"
   become: true
 
-- name: install | Populate service facts
-  ansible.builtin.service_facts:
-
-# This will ignore the case when besu is manually stopped - it assumes that is a mistake
-# If you are manually stopping and updating besu - disable the systemd service
-- name: install | Debug besu_state_updates
-  ansible.builtin.debug:
-    var: ansible_facts.services['besu.service']
-
-- name: install | Halt the service if its running while we update
-  ansible.builtin.systemd:
-    name: besu
-    state: "stopped"
-  become: true
-  register: besu_systemd_stopped
-  when: (ansible_facts.services['besu.service'] is defined) and
-        (ansible_facts.services['besu.service'].status =="enabled")
-
-- name: install | Set updated optionally to trigger a systemd restart at the end
-  ansible.builtin.set_fact:
-    besu_state_updates: "{{ besu_state_updates + ['besu.running_service'] }}"
-  when: (besu_systemd_stopped is defined) and 
-        (besu_systemd_stopped.state | default('') == "stopped")
-
 - block:
     - name: install | One-time recursive ownership of data dir
       ansible.builtin.file:
@@ -137,7 +126,6 @@
 - name: install | delete the besu_build_from_source directory
   ansible.builtin.file:
     path: '/tmp/besu'
-    state: directory
     owner: "{{ besu_user }}"
     group: "{{ besu_group }}"
     state: absent

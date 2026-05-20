@@ -9,6 +9,13 @@
   become: true
   register: config_toml
 
+# only takes effect if static nodes list is provided and static nodes file is not already set,
+# otherwise it is expected the user has set the static nodes file path themselves and we use that path
+- name: config | Set static nodes file path when list is provided
+  ansible.builtin.set_fact:
+    besu_static_nodes_file: "{{ besu_config_dir }}/static-nodes.json"
+  when: besu_static_nodes != [] and besu_static_nodes_file == ""
+
 - name: config | Generate static nodes file if defined
   ansible.builtin.copy:
     dest: "{{ besu_static_nodes_file }}"

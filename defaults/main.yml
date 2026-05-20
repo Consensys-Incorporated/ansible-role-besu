@@ -31,7 +31,8 @@ besu_data_dir: "{{ besu_base_dir }}/data"
 besu_log_dir: "/var/log/besu"
 besu_profile_file: "/etc/profile.d/besu-path.sh"
 
-besu_static_nodes_file: "{{ besu_config_dir }}/static-nodes.json"
+besu_static_nodes_file: ""
+besu_static_nodes_list: []
 besu_local_permissions_config_file: "{{ besu_config_dir }}/permissions_config.toml"
 besu_local_permissions_config_file_template: "permissions_config.toml.j2"
 besu_version_info_file: "{{ besu_config_dir }}/elc_version"

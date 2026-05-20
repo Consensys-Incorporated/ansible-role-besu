@@ -166,10 +166,11 @@ permissions-nodes-contract-version={{besu_permissions_nodes_contract_version}}
 bootnodes=[{{besu_bootnodes|map('to_json')|join(',')}}]
 {% endif %}
 
-{% if besu_static_nodes != [] %}
+{% if besu_static_nodes_file != "" %}
 # static-nodes
 static-nodes-file="{{ besu_static_nodes_file }}"
 {% endif %}
+
 
 {% if besu_privacy_enabled|bool == True %}
 # Orion

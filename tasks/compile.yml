@@ -13,8 +13,8 @@
 
 - name: compile | Ensure JDK is installed
   ansible.builtin.fail:
-    msg: "You must have JDK 21 or later installed. {{ 'No version found.' if jdk_version is failed else 'Found version ' + jdk_version.stdout }}"
-  when: jdk_version.stdout is version('21.0.0', '<')
+    msg: "You must have JDK 25 or later installed. {{ 'No version found.' if jdk_version is failed else 'Found version ' + jdk_version.stdout }}"
+  when: jdk_version.stdout is version('25.0.0', '<')
 
 - name: compile | Clone Besu Sources
   ansible.builtin.git:
@@ -44,7 +44,6 @@
       become_user: ubuntu
       register: besu_build_result
       changed_when: true
-      ignore_errors: true  # handle the failure manually in the next step
       retries: "{{ besu_build_retries | int }}"
       delay: 10   # wait 10 seconds between retries
       until: besu_build_result.rc == 0  # retry until the command returns a successful return code

@@ -9,6 +9,7 @@ besu_gid: 1511
 # Version to install
 besu_download_url: "https://github.com/hyperledger/besu/releases/download/{{ _besu_version }}/besu-{{ _besu_version }}.tar.gz"
 besu_latest_version_url: "https://api.github.com/repos/hyperledger/besu/releases/latest"
+besu_min_jdk_version: "25.0.0"
 
 # Building from source
 besu_build_from_source: false

@@ -14,7 +14,7 @@
 - name: compile | Ensure JDK is installed
   ansible.builtin.fail:
     msg: "You must have JDK 25 or later installed. {{ 'No version found.' if jdk_version is failed else 'Found version ' + jdk_version.stdout }}"
-  when: jdk_version.stdout is version('25.0.0', '<')
+  when: jdk_version.stdout is version(besu_min_jdk_version, '<')
 
 - name: compile | Clone Besu Sources
   ansible.builtin.git:

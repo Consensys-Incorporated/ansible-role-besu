@@ -48,6 +48,7 @@ besu_launchd_dir: /Library/LaunchAgents
 
 # Besu config
 besu_host_ip: ""
+besu_host_ip_type: "public"
 besu_network: mainnet
 besu_sync_mode: FAST
 besu_p2p_port: 30303

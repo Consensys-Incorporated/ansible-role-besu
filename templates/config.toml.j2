@@ -127,7 +127,9 @@ tx-pool-limit-by-account-percentage={{ besu_tx_pool_limit_by_account_percentage 
 tx-pool-max-size={{ besu_tx_pool_max_size }}
 tx-pool-retention-hours={{ besu_tx_pool_retention_hours }}
 {% endif %}
+{% if besu_tx_pool_price_bump != "" %}
 tx-pool-price-bump={{ besu_tx_pool_price_bump }}
+{% endif %}
 
 # metrics
 metrics-enabled=true

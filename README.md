@@ -14,7 +14,6 @@ Ansible role that will install, configure and runs [Besu](https://www.hyperledge
 ### Supported Platforms
 ```
 * MacOS
-* Debian
 * Ubuntu
 * Redhat(CentOS/Fedora)
 * Amazon

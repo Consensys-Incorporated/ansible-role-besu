@@ -9,10 +9,12 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - all
+        - resolute
+        - noble
     - name: Fedora
       versions:
-        - all
+        - "44"
+        - "43"
   galaxy_tags:
     - besu
     - blockchain

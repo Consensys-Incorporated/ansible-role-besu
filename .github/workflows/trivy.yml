@@ -22,6 +22,6 @@ jobs:
       security-events: write
     uses: Consensys-Incorporated/github-actions/.github/workflows/trivy.yml@b1b859363ac0a54a542a45dfb379d8b48e34a081 # 2.1.1
     with:
-      environment: security
+      environment: security # holds SLACK_WEBHOOK
     secrets:
-      SLACK_WEBHOOK: ${{ secrets.APPSEC_BOT_SLACK_WEBHOOK }} # org secret
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }} # value from the security environment

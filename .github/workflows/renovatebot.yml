@@ -17,13 +17,12 @@ permissions:
 jobs:
   renovatebot-check:
     runs-on: ubuntu-24.04
-    environment: security
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Run renovatebot
         uses: Consensys-Incorporated/github-actions/renovatebot@b1b859363ac0a54a542a45dfb379d8b48e34a081 # 2.1.1
         with:
-          GH_APP_ID: ${{ secrets.GH_APP_ID }}
-          GH_PRIVATE_KEY: ${{ secrets.GH_PRIVATE_KEY }}
+          GH_APP_ID: ${{ secrets.RENOVATE_APP_ID }}
+          GH_PRIVATE_KEY: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
           GH_REPOSITORY: ${{ github.repository }}
